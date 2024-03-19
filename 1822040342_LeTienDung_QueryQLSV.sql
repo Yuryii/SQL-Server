@@ -313,9 +313,25 @@ ELSE
 	PRINT 'MSGV KHONG TON TAI'
 EXECUTE SP_CAU3_QLSV '11', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
 
-
-
-4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
+-- 4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
+CREATE PROC SP_CAU4_QLSV
+(
+	@MSDT CHAR(6),
+	@TENDT_MOI VARCHAR(30)
+)
+AS
+	IF EXISTS (SELECT MSDT FROM DETAI WHERE MSDT = @MSDT)
+	BEGIN
+		UPDATE DETAI
+		SET TENDT = @TENDT_MOI
+		WHERE MSDT = @MSDT
+		PRINT 'CAP NHAT THANH CONG'
+		RETURN 1
+	END
+	ELSE
+		PRINT 'BAN CAP NHAT KHONG THANH CONG'
+		RETURN 0
+EXECUTE SP_CAU4_QLSV '97002', 'NHAN DANG KHUON MAT'
 
 5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới Thủ tục dùng để cập nhật sinh viên trên. Nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
 
