@@ -351,7 +351,23 @@ BEGIN
 END
 RETURN 0
 
-6. Đưa vào MSDT hãy chuyển đổi sao cho với đề tài đó GVHD -> GVPB. GVPB -> GVHD. Nếu không tìm thấy trả về giá trị 0.
+-- 6. Đưa vào MSDT hãy chuyển đổi sao cho với đề tài đó GVHD -> GVPB. GVPB -> GVHD. Nếu không tìm thấy trả về giá trị 0.
+ALTER PROC SP_CAU6_QLSV (@MSDT CHAR(6))
+AS
+DECLARE @GVHD SMALLINT, @GVPB SMALLINT 
+SET @GVHD = (SELECT MSGV FROM GV_HDDTN WHERE MSDT=@MSDT)
+SET @GVPB = (SELECT MSGV FROM GV_PBDT WHERE MSDT=@MSDT)
+
+UPDATE GV_HDDTN
+SET MSGV = @GVHD
+WHERE MSDT = @MSDT
+
+UPDATE GV_PBDT
+SET MSGV= @GVPB
+WHERE MSDT =@MSDT
+
+EXEC SP_CAU6_QLSV '97002'
+
 
 7. Đưa vào TENGV, TENSV. Hãy6y chuyển để tài của sinh viên đó cho giáo viên mới hướng dẫn với TENGV là tham số vào. Nếu không tìm thấy, hoặc tìm thấy nhưng không duy nhất thì trả về 0, 1.
 
