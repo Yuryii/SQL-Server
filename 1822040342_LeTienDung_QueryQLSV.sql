@@ -256,16 +256,39 @@ AS
 IF EXISTS (SELECT MSHH FROM HOCHAM WHERE MSHH =@MSHH)
 BEGIN
 	INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+	PRINT 'BAN DA THEM DU LIEU THANH CONG'
 END
 ELSE
 	PRINT 'MA HOC HAM KHONG TON TAI TRONG BANG HOC  HAM'
 -- THUC THI
-EXEC SP_CAU1_QLSV '8', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
+EXEC SP_CAU1_QLSV '10', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1976'
 
 
 -- 2. Tham số đưa vào là MSGV, TENGV, SODT, DIACHI, MSHH, NAMHΗ Trước khi chèn dữ liệu cần kiểm tra MSGV có trùng không, nếu trùng trả về giá trị 0.
 
-3. Giống câu la, là kiểm tra xem MSGV có trùng không. MSHH tổn tại chưa Nếu MSGV trùng trả về 0. Nếu MSHH chưa tồn tại trả về 1, ngược lại cho insert dữ liệu.
+CREATE PROC SP_CAU2_QLSV
+(
+	@MSGV SMALLINT, 
+	@TENGV VARCHAR(30),
+	@SODTH VARCHAR(10),
+	@DIACHI VARCHAR(50), 
+	@MSHH SMALLINT,
+	@NAMHH SMALLDATETIME
+) 
+AS
+IF NOT EXISTS (SELECT MSGV FROM GIAO_VIEN WHERE MSGV =@MSGV)
+BEGIN
+	INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+	PRINT 'BAN DA THEM DU LIEU THANH CONG'
+END
+ELSE
+	PRINT 'MA GIAO VIEN DA TRUNG'
+-- THUC THI
+EXEC SP_CAU2_QLSV '11', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
+
+
+
+-- 3. Giống câu la, là kiểm tra xem MSGV có trùng không. MSHH tổn tại chưa Nếu MSGV trùng trả về 0. Nếu MSHH chưa tồn tại trả về 1, ngược lại cho insert dữ liệu.
 
 4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
 
