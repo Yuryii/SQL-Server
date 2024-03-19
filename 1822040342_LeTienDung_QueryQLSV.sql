@@ -238,3 +238,53 @@ INSERT INTO HOIDONG_DT VALUES ('4', '97003','Không');
 INSERT INTO HOIDONG_DT VALUES ('4', '97005','Không');
 INSERT INTO HOIDONG_DT VALUES ('4', '97006','Được');
 
+--
+A. STORED PROCEDUREDS VỚI THAM SỐ VÀO
+
+-- 1. Tham số đưa vào là MSGV, TENGV, SODT, DIACHI, MSHH, NAMHH. Trước khi insert dữ liệu cần kiểm tra MSHH đã tồn tại trong table HOCHAM chưa, nếu chưa trả ra giá trị 0.
+
+CREATE PROC SP_CAU1_QLSV
+(
+	@MSGV SMALLINT, 
+	@TENGV VARCHAR(30),
+	@SODTH VARCHAR(10),
+	@DIACHI VARCHAR(50), 
+	@MSHH SMALLINT,
+	@NAMHH SMALLDATETIME
+) 
+AS
+IF EXISTS (SELECT MSHH FROM HOCHAM WHERE MSHH =@MSHH)
+BEGIN
+	INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+END
+ELSE
+	PRINT 'MA HOC HAM KHONG TON TAI TRONG BANG HOC  HAM'
+-- THUC THI
+EXEC SP_CAU1_QLSV '8', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
+
+
+-- 2. Tham số đưa vào là MSGV, TENGV, SODT, DIACHI, MSHH, NAMHΗ Trước khi chèn dữ liệu cần kiểm tra MSGV có trùng không, nếu trùng trả về giá trị 0.
+
+3. Giống câu la, là kiểm tra xem MSGV có trùng không. MSHH tổn tại chưa Nếu MSGV trùng trả về 0. Nếu MSHH chưa tồn tại trả về 1, ngược lại cho insert dữ liệu.
+
+4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
+
+5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới Thủ tục dùng để cập nhật sinh viên trên. Nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
+
+6. Đưa vào MSDT hãy chuyển đổi sao cho với đề tài đó GVHD -> GVPB. GVPB -> GVHD. Nếu không tìm thấy trả về giá trị 0.
+
+7. Đưa vào TENGV, TENSV. Hãy chuyển để tài của sinh viên đó cho giáo viên mới hướng dẫn với TENGV là tham số vào. Nếu không tìm thấy, hoặc tìm thấy nhưng không duy nhất thì trả về 0, 1.
+
+8. Đưa vào TENSV nếu không vi phạm ràng buộc toàn vẹn về khóa ngoại thì xóa. Ngược lại trả về 0.
+
+B. STORED PROCEDUREDS VỚI THAM SỐ VÀO VÀ RA
+
+1. Đưa vào TENHV Trả ra : Số GV thỏa học vị, nếu không tìm thấy trả về 0
+
+2. Đưa vào MSDT Cho biết: Điểm trung bình của đề tài, nếu không tìm thấy trả về 0
+
+3. Đưa vào TENGV Trả ra : Số điện thoại của giáo viên, nếu không tìm thấy trả về 0
+
+4. Đưa vào MSHD Trả ra : tên chủ tịch hội đồng và số điện thoại, nếu không tìm thấy trả về 0
+
+5. Đưa vào TENHV Cho biết : Số đề tài hướng dẫn, số đề tài phản biện do giáo viên đó phụ trách
