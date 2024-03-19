@@ -1,4 +1,5 @@
-﻿CREATE DATABASE QLSV2
+﻿-- LE TIEN DUNG --- 
+CREATE DATABASE QLSV2
 CREATE TABLE SINHVIEN
 (
 	MSSV CHAR(6) PRIMARY KEY,
@@ -302,15 +303,17 @@ IF NOT EXISTS (SELECT MSGV FROM GIAO_VIEN WHERE MSGV = @MSGV)
 BEGIN
 	IF EXISTS (SELECT MSHH FROM HOCHAM WHERE MSHH =@MSHH)
 	BEGIN
-		RETURN 0
+		INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+		RETURN 1
 	END
 	ELSE 
 	BEGIN
-		INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+		PRINT 'MA HOC HAM KHONG TON TAI TRONG BANG HOC HAM'
 	END
 END
 ELSE
-	PRINT 'MSGV KHONG TON TAI'
+	PRINT 'MSGV TRUNG'
+	RETURN 0
 EXECUTE SP_CAU3_QLSV '11', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
 
 -- 4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
@@ -333,7 +336,7 @@ AS
 		RETURN 0
 EXECUTE SP_CAU4_QLSV '97002', 'NHAN DANG KHUON MAT'
 
-5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới Thủ tục dùng để cập nhật sinh viên trên. Nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
+-- 5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới Thủ tục dùng để cập nhật sinh viên trên. Nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
 
 6. Đưa vào MSDT hãy chuyển đổi sao cho với đề tài đó GVHD -> GVPB. GVPB -> GVHD. Nếu không tìm thấy trả về giá trị 0.
 
