@@ -338,9 +338,22 @@ EXECUTE SP_CAU4_QLSV '97002', 'NHAN DANG KHUON MAT'
 
 -- 5. Tham số đưa vào MSSV, TENSV mới, DIACHI mới Thủ tục dùng để cập nhật sinh viên trên. Nếu không tìm thấy trả về 0, ngược lại cập nhật và trả về 1.
 
+CREATE PROC SP_CAU5_QLSV
+(
+	@MSSV CHAR(6), 
+	@TENSV VARCHAR(30),
+	@DIACHI CHAR(50)
+)
+AS
+IF EXISTS (SELECT MSSV, TENSV, DIACHI FROM SINHVIEN WHERE MSSV = @MSSV AND TENSV = @TENSV AND DIACHI = @DIACHI) 
+BEGIN
+	RETURN 1
+END
+RETURN 0
+
 6. Đưa vào MSDT hãy chuyển đổi sao cho với đề tài đó GVHD -> GVPB. GVPB -> GVHD. Nếu không tìm thấy trả về giá trị 0.
 
-7. Đưa vào TENGV, TENSV. Hãy chuyển để tài của sinh viên đó cho giáo viên mới hướng dẫn với TENGV là tham số vào. Nếu không tìm thấy, hoặc tìm thấy nhưng không duy nhất thì trả về 0, 1.
+7. Đưa vào TENGV, TENSV. Hãy6y chuyển để tài của sinh viên đó cho giáo viên mới hướng dẫn với TENGV là tham số vào. Nếu không tìm thấy, hoặc tìm thấy nhưng không duy nhất thì trả về 0, 1.
 
 8. Đưa vào TENSV nếu không vi phạm ràng buộc toàn vẹn về khóa ngoại thì xóa. Ngược lại trả về 0.
 
