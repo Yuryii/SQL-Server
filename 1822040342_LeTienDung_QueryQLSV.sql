@@ -286,9 +286,34 @@ ELSE
 -- THUC THI
 EXEC SP_CAU2_QLSV '11', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
 
+-- 3. Giống câu 1 & 2, là kiểm tra xem MSGV có trùng không. MSHH tổn tại chưa Nếu MSGV trùng trả về 0. Nếu MSHH chưa tồn tại trả về 1, ngược lại cho insert dữ liệu.
+
+ALTER PROC SP_CAU3_QLSV
+(
+	@MSGV SMALLINT, 
+	@TENGV VARCHAR(30),
+	@SODTH VARCHAR(10),
+	@DIACHI VARCHAR(50), 
+	@MSHH SMALLINT,
+	@NAMHH SMALLDATETIME
+) 
+AS
+IF NOT EXISTS (SELECT MSGV FROM GIAO_VIEN WHERE MSGV = @MSGV)
+BEGIN
+	IF EXISTS (SELECT MSHH FROM HOCHAM WHERE MSHH =@MSHH)
+	BEGIN
+		RETURN 0
+	END
+	ELSE 
+	BEGIN
+		INSERT INTO GIAO_VIEN VALUES (@MSGV, @TENGV, @DIACHI, @SODTH, @MSHH, @NAMHH)
+	END
+END
+ELSE
+	PRINT 'MSGV KHONG TON TAI'
+EXECUTE SP_CAU3_QLSV '11', 'LE THI QUYNH NHU', '11/3 SUOI SON', '8912367', '1', '1997'
 
 
--- 3. Giống câu la, là kiểm tra xem MSGV có trùng không. MSHH tổn tại chưa Nếu MSGV trùng trả về 0. Nếu MSHH chưa tồn tại trả về 1, ngược lại cho insert dữ liệu.
 
 4. Đưa vào MSDT cũ, TENDETAI mới Hãy cập nhật TENDETAI mới với MSDT cũ không đổi nếu không tìm thấy trả về 0 ngược lại cập nhật và trà về 1.
 
