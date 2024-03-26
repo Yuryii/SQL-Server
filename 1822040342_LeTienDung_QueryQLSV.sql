@@ -368,6 +368,7 @@ WHERE MSDT =@MSDT
 
 EXEC SP_CAU6_QLSV '97002'
 
+-----------------------
 -- cau 1 nhap vao mssv, hay cho biet thong tin cua sinh vien do
 ALTER PROC NEW_SP_CAU1_QLSV
 (
@@ -428,19 +429,82 @@ BEGIN
 	SELECT * FROM DETAI WHERE MADT = @MSDT
 END
 EXEC CAU4 '3'
-
+-----------------
 7. Đưa vào TENGV, TENSV. Hãy6y chuyển để tài của sinh viên đó cho giáo viên mới hướng dẫn với TENGV là tham số vào. Nếu không tìm thấy, hoặc tìm thấy nhưng không duy nhất thì trả về 0, 1.
 
 8. Đưa vào TENSV nếu không vi phạm ràng buộc toàn vẹn về khóa ngoại thì xóa. Ngược lại trả về 0.
 
 B. STORED PROCEDUREDS VỚI THAM SỐ VÀO VÀ RA
 
-1. Đưa vào TENHV Trả ra : Số GV thỏa học vị, nếu không tìm thấy trả về 0
+-- 1. Đưa vào TENHV Trả ra : Số GV thỏa học vị, nếu không tìm thấy trả về 0
+ALTER PROC SP_CAU1B_QLSV(@TENHV VARCHAR(10), @SOGV INT OUTPUT)
+AS 
+BEGIN
+	SELECT @SOGV=COUNT(*)
+	FROM HOCVI AS HV, GV_HV_CN AS GV
+	WHERE HV.MSHV =  GV.MSHV AND HV.TENHV = @TENHV
+END
+GO
+DECLARE @SOGV INT
+EXEC SP_CAU1B_QLSV 'TH.S', @SOGV OUTPUT
+PRINT 'SO GIAO VIEN LA' + CAST(@SOGV AS VARCHAR)
 
-2. Đưa vào MSDT Cho biết: Điểm trung bình của đề tài, nếu không tìm thấy trả về 0
+-- 2. Đưa vào MSDT Cho biết: Điểm trung bình của đề tài, nếu không tìm thấy trả về 0
+ALTER PROC SP_CAU2B_QLSV( @MSDT CHAR(6), @DTB FLOAT OUTPUT)
+AS
+BEGIN
+	DECLARE @DIEM_HD FLOAT, @DIEM_PB FLOAT, @DIEM_UV FLOAT
+	DECLARE @SO_GVHD INT, @SO_GVPB INT, @SO_UY_VIEN INT
+	SELECT @DIEM_HD = SUM(DIEM), @SO_GVHD = COUNT(MSDT) FROM GV_HDDTN WHERE MSDT = @MSDT
 
-3. Đưa vào TENGV Trả ra : Số điện thoại của giáo viên, nếu không tìm thấy trả về 0
+	SELECT @DIEM_PB = SUM(DIEM), @SO_GVPB = COUNT(MSDT) FROM GV_PBDT WHERE MSDT = @MSDT
 
-4. Đưa vào MSHD Trả ra : tên chủ tịch hội đồng và số điện thoại, nếu không tìm thấy trả về 0
+	SELECT @DIEM_UV = SUM(DIEM), @SO_UY_VIEN = COUNT(MSDT) FROM GV_UVDT WHERE MSDT = @MSDT
+	
+	SET @DTB = (@DIEM_HD + @DIEM_PB + @DIEM_UV) / (@SO_GVHD + @DIEM_PB + @SO_UY_VIEN)
+END
+DECLARE @DTB FLOAT
+EXEC SP_CAU2B_QLSV '97005', @DTB OUTPUT
+PRINT 'DIEM TRUNG BINH CUA DE TAI LA:' + CAST (@DTB AS VARCHAR)
+
+
+-- 3. Đưa vào TENGV Trả ra : Số điện thoại của giáo viên, nếu không tìm thấy trả về 0
+ALTER PROC SP_CAU3B_QLSV
+(
+	@TENGV VARCHAR(30),
+	@SODTH VARCHAR(10) OUTPUT
+)
+AS
+BEGIN
+	IF EXISTS ( SELECT TENGV FROM GIAO_VIEN WHERE @TENGV = TENGV)
+	BEGIN
+		SELECT @SODTH = SODTH FROM GIAO_VIEN WHERE @TENGV = TENGV
+	END
+	ELSE 
+	SET @SODTH = 0
+END
+DECLARE @OutputSODTH VARCHAR(10)
+EXECUTE SP_CAU3B_QLSV 'Lê ', @OutputSODTH OUTPUT
+SELECT @OutputSODTH AS SODTH
+
+-- 4. Đưa vào MSHD Trả ra : tên chủ tịch hội đồng và số điện thoại, nếu không tìm thấy trả về 0
+ALTER PROC SP_CAU3B_QLSV
+(
+	@TENGV VARCHAR(30),
+	@SODTH VARCHAR(10) OUTPUT
+)
+AS
+BEGIN
+	IF EXISTS ( SELECT TENGV FROM GIAO_VIEN WHERE @TENGV = TENGV)
+	BEGIN
+		SELECT @SODTH = SODTH FROM GIAO_VIEN WHERE @TENGV = TENGV
+	END
+	ELSE 
+	SET @SODTH = 0
+END
+DECLARE @OutputSODTH VARCHAR(10)
+EXECUTE SP_CAU3B_QLSV 'Lê ', @OutputSODTH OUTPUT
+SELECT @OutputSODTH AS SODTH
 
 5. Đưa vào TENHV Cho biết : Số đề tài hướng dẫn, số đề tài phản biện do giáo viên đó phụ trách
+6. 
